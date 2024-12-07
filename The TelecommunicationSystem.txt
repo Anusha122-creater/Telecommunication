@@ -1,0 +1,162 @@
+-- Create the TelecommunicationSystem database
+CREATE DATABASE TelecommunicationSystem;
+USE TelecommunicationSystem;
+
+-- Create Subscribers table
+CREATE TABLE Subscribers (
+  SubscriberID INT PRIMARY KEY,
+  Name VARCHAR(200),
+  Phone_number VARCHAR(15),
+  Address VARCHAR(200)
+);
+
+-- Insert subscriber data
+INSERT INTO Subscribers (SubscriberID, Name, Phone_number, Address)
+VALUES
+  (1, 'Kavya', '98763452', '2-4/1 Warangal'),
+  (2, 'Shruthi', '98756783', '3-9/1 Hyderabad'),
+  (3,'Devika','87456903','4-6/2 Karimnagar'),
+  (4,'Gayathri','79023456','6-90 Nizamabad'),
+  (5,'Bhavitha','87123409','576-2 Medak');
+
+SELECT * FROM Subscribers;
+
+-- Retrieve subscriber information
+SELECT * FROM Subscribers WHERE SubscriberID = 1;
+
+-- Update subscriber information
+UPDATE Subscribers 
+SET Name = 'Bhavitha', 
+    Address = 'Kamareddy' 
+WHERE SubscriberID = 5;
+
+-- Delete subscriber
+DELETE FROM Subscribers WHERE SubscriberID = 2;
+
+-- Create Calls table
+CREATE TABLE Calls (
+  CallID INT PRIMARY KEY,
+  SubscriberID INT,
+  CallDate DATE,
+  CallTime TIME,
+  CalledParty VARCHAR(200),
+  CallDuration INT,
+  FOREIGN KEY (SubscriberID) REFERENCES Subscribers(SubscriberID)
+);
+
+-- Insert call data
+INSERT INTO Calls (CallID, SubscriberID, CallDate, CallTime, CalledParty, CallDuration)
+VALUES
+  (1, 1, '2024-03-01', '10:00:00', '9876543210', 30),
+  (2, 1, '2024-03-02', '11:00:00', '5551234567', 45);
+
+-- Retrieve call details
+SELECT * FROM Calls WHERE SubscriberID = 1;
+
+-- Update call duration
+UPDATE Calls 
+SET CallDuration = 60 
+WHERE CallID = 1;
+
+-- Create Messages table
+CREATE TABLE Messages (
+  MessageID INT PRIMARY KEY,
+  SubscriberID INT,
+  MessageDate DATE,
+  MessageTime TIME,
+  MessageType VARCHAR(10),
+  MessageContent VARCHAR(255),
+  FOREIGN KEY (SubscriberID) REFERENCES Subscribers(SubscriberID)
+);
+
+-- Insert message data
+INSERT INTO Messages (MessageID, SubscriberID, MessageDate, MessageTime, MessageType, MessageContent)
+VALUES
+  (1, 1, '2024-03-01', '10:05:00', 'SMS', 'Hello, how are you?'),
+  (2, 1, '2024-03-02', '11:10:00', 'MMS', 'Check out this image');
+
+-- Retrieve message details
+SELECT * FROM Messages WHERE SubscriberID = 1;
+
+-- Create Billing_Cycles table
+CREATE TABLE Billing_Cycles (
+  BillingCycleID INT PRIMARY KEY,
+  SubscriberID INT,
+  BillingDate DATE,
+  Amount DECIMAL(10, 2),
+  FOREIGN KEY (SubscriberID) REFERENCES Subscribers(SubscriberID)
+);
+
+-- Insert billing cycle data
+INSERT INTO Billing_Cycles (BillingCycleID, SubscriberID, BillingDate, Amount)
+VALUES
+  (1, 1, '2024-03-01', 100.00),
+  (2, 1, '2024-04-01', 120.00);
+
+-- Retrieve billing cycle data
+SELECT * FROM Billing_Cycles;
+
+-- Retrieve billing cycle information for a subscriber
+SELECT * FROM Billing_Cycles WHERE SubscriberID = 1;
+
+-- Retrieve subscriber call history
+SELECT S.Name, C.CallDate, C.CallTime, C.CalledParty, C.CallDuration 
+FROM Subscribers S 
+JOIN Calls C ON S.SubscriberID = C.SubscriberID;
+
+-- Retrieve subscriber message history
+SELECT S.Name, M.MessageDate, M.MessageTime, M.MessageType, M.MessageContent 
+FROM Subscribers S 
+JOIN Messages M ON S.SubscriberID = M.SubscriberID;
+
+-- Create Payments table
+CREATE TABLE Payments (
+  PaymentID INT PRIMARY KEY,
+  BillingCycleID INT,
+  PaymentDate DATE,
+  PaymentMethod VARCHAR(50),
+  FOREIGN KEY (BillingCycleID) REFERENCES Billing_Cycles(BillingCycleID)
+);
+
+-- Insert payment data
+INSERT INTO Payments (PaymentID, BillingCycleID, PaymentDate, PaymentMethod)
+VALUES
+  (1, 1, '2024-03-05', 'Credit Card'),
+  (2, 2, '2024-04-05', 'Bank Transfer');
+
+-- Retrieve payment details
+SELECT * FROM Payments WHERE BillingCycleID = 1;
+
+-- Create Network Elements table
+CREATE TABLE NetworkElements (
+  NetworkElementID INT PRIMARY KEY,
+  Type VARCHAR(50),
+  Location VARCHAR(200)
+);
+
+-- Insert network element data
+INSERT INTO NetworkElements (NetworkElementID, Type, Location)
+VALUES
+  (1, 'Base Station', 'Warangal'),
+  (2, 'Switching Center', 'Hyderabad'),
+  (3, 'Transmission Tower', 'Karimnagar');
+
+-- Retrieve network element details
+SELECT * FROM NetworkElements;
+
+-- Create Inventory table
+CREATE TABLE Inventory (
+  InventoryID INT PRIMARY KEY,
+  EquipmentType VARCHAR(50),
+  Quantity INT
+);
+
+-- Insert inventory data
+INSERT INTO Inventory (InventoryID, EquipmentType, Quantity)
+VALUES
+  (1, 'Router', 100),
+  (2, 'Switch', 50),
+  (3, 'Fiber Optic Cable', 200);
+
+-- Retrieve inventory details
+SELECT * FROM Inventory;
